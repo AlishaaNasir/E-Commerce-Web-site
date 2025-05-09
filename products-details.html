@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="description" content="Trendiq - Your One-Stop Fashion Store">
+    <title>Product Details | Trendiq</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Basic styling for product details */
+        .product-details-container {
+            display: flex;
+            gap: 20px;
+            padding: 20px;
+        }
+        .product-image {
+            flex: 1;
+        }
+        .product-info {
+            flex: 1;
+        }
+        .details-list {
+            list-style: none;
+            padding: 0;
+        }
+        .details-list li {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="container">
+            <div class="logo">TRENDIQ</div>
+            <nav class="nav">
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="category.html">Categories</a></li>
+                    <li><a href="products.html">Products</a></li>
+                    <li><a href="cart.html">Cart</a></li>
+                    <li><a href="see.html">See More</a></li>
+                </ul>
+            </nav>
+            <div class="menu-toggle" id="menu-toggle">
+                <i class="fa fa-bars"></i>
+            </div>
+        </div>
+    </header>
+
+    <section class="product-detail container">
+        <div class="product-details-container">
+            <div class="product-image">
+                <img id="product-detail-image" src="assets/images/placeholder.jpg" alt="Product Image">
+            </div>
+            <div class="product-info">
+                <h1 id="product-detail-name">Product Name</h1>
+                <p class="price" id="product-detail-price">Price: $--</p>
+                <p id="product-detail-description">Description will go here.</p>
+
+                <h3>Available Options:</h3>
+                <ul class="details-list" id="product-detail-options">
+                    <li>Size: <span id="product-detail-size"></span></li>
+                    <li>Color: <span id="product-detail-color"></span></li>
+                    <li>Available Pieces: <span id="product-detail-pieces"></span></li>
+                </ul>
+
+                <div class="options">
+                    <label for="size">Size:</label>
+                    <select id="size">
+                        <option>Small</option>
+                        <option>Medium</option>
+                        <option>Large</option>
+                    </select>
+
+                    <label for="quantity">Quantity:</label>
+                    <input type="number" id="quantity" value="1" min="1">
+                </div>
+
+                <button class="btn add-to-cart" id="addToCartBtn" data-product-id="" data-product-name="" data-product-price="">Add to Cart</button>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <p>© 2025 Trendiq. All Rights Reserved.</p>
+    </footer>
+
+    <div id="addToCartNotification" class="add-to-cart-notification">
+        Item added to cart!
+    </div>
+
+    <script src="assets/js/cart-utils.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const productId = urlParams.get('id');
+            const productImage = document.getElementById('product-detail-image');
+            const productNameElement = document.getElementById('product-detail-name');
+            const productPriceElement = document.getElementById('product-detail-price');
+            const productDescriptionElement = document.getElementById('product-detail-description');
+            const productOptionsList = document.getElementById('product-detail-options');
+            const productSizeSpan = document.getElementById('product-detail-size');
+            const productColorSpan = document.getElementById('product-detail-color');
+            const productPiecesSpan = document.getElementById('product-detail-pieces');
+            const addToCartBtn = document.getElementById('addToCartBtn');
+            const sizeSelect = document.getElementById('size');
+            const quantityInput = document.getElementById('quantity');
+
+            // Dummy product data (replace with your actual data source)
+            const productsData = {
+                "1": { name: "Wireless Headphones", price: 99.99, description: "High-quality wireless headphones.", image: "assets/images/product1.jpg", sizes: ["One Size"], colors: ["Black", "Silver"], pieces: 20 },
+                "2": { name: "Stylish T-Shirt", price: 29.99, description: "Comfortable and stylish t-shirt.", image: "assets/images/shirt2.jpg", sizes: ["S", "M", "L"], colors: ["Blue", "Red", "Green"], pieces: 50 },
+                "3": { name: "Running Shoes", price: 79.99, description: "Performance running shoes.", image: "assets/images/shoe1.jpg", sizes: ["7", "8", "9", "10"], colors: ["Gray", "Black", "White"], pieces: 35 },
+                "5": { name: "Trendy Shirt", price: 25.99, description: "High-quality trendy shirt.", image: "https://image.made-in-china.com/2f0j00wSHqKJYsGMkg/Trendy-Brand-T-Shirt-Summer-Trend-Short-Sleeved-Men-s-Oversized-Couple-Style-Half-Sleeved.webp", sizes: ["S", "M", "L"], colors: ["Blue", "Black", "White"], pieces: 50 },
+                "6": { name: "Casual Sneakers", price: 49.99, description: "Comfortable casual sneakers.", image: "https://shopify-app-group-product.s3.amazonaws.com/1718618104523-8-800x800_22c88bd9-f9c2-4c61-ab55-71edce92bf57.jpg", sizes: ["7", "8", "9", "10"], colors: ["Gray", "Red", "White"], pieces: 30 },
+                "7": { name: "Stylish Watch", price: 89.99, description: "Elegant stylish watch.", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSDuc3dqsWPscg-MvKiA7rWH4J8LRVdXzsvhjRNb3avt1fyylyf2UT1cONF6sjBZ-jXluM&usqp=CAU", sizes: ["One Size"], colors: ["Silver", "Gold"], pieces: 20 },
+                "8": { name: "Elegant Bag", price: 59.99, description: "Fashionable elegant bag.", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS01FbKk1kwgd_YUAO3Ah8YPpHiFCkTZMHTsw&s", sizes: ["One Size"], colors: ["Brown", "Black"], pieces: 15 },
+                "9": { name: "Make Up", price: 60.99, description: "Assorted make up kit.", image: "", sizes: ["One Size"], colors: ["Assorted"], pieces: 40 },
+                "10": { name: "Slippers", price: 30, description: "Comfortable indoor slippers.", image: "", sizes: ["S", "M", "L"], colors: ["Pink", "Blue", "Gray"], pieces: 60 },
+                "11": { name: "Hat", price: 36.99, description: "Stylish casual hat.", image: "", sizes: ["One Size"], colors: ["Black", "Beige"], pieces: 25 },
+                "12": { name: "Shirts", price: 30, description: "Collection of basic shirts.", image: "", sizes: ["S", "M", "L", "XL"], colors: ["White", "Gray", "Navy"], pieces: 70 },
+                "13": { name: "Pants", price: 30, description: "Comfortable casual pants.", image: "", sizes: ["28", "30", "32", "34"], colors: ["Black", "Khaki"], pieces: 45 }
+            };
+
+            if (productId && productsData[productId]) {
+                const product = productsData[productId];
+                productImage.src = product.image || 'assets/images/placeholder.jpg'; // Use placeholder if no image
+                productImage.alt = product.name;
+                productNameElement.textContent = product.name;
+                productPriceElement.textContent = `Price: $${product.price.toFixed(2)}`;
+                productDescriptionElement.textContent = product.description;
+
+                // Update options display
+                productSizeSpan.textContent = product.sizes ? product.sizes.join(', ') : 'N/A';
+                productColorSpan.textContent = product.colors ? product.colors.join(', ') : 'N/A';
+                productPiecesSpan.textContent = product.pieces !== undefined ? product.pieces : 'N/A';
+
+                // Set data attributes for Add to Cart button
+                addToCartBtn.dataset.productId = productId;
+                addToCartBtn.dataset.productName = product.name;
+                addToCartBtn.dataset.productPrice = product.price;
+            } else {
+                // Handle case where product ID is not found
+                productNameElement.textContent = "Product Not Found";
+                productDescriptionElement.textContent = "Sorry, the product you are looking for could not be found.";
+                // You might want to hide the add to cart button and options in this case
+            }
+
+            // Add to Cart functionality on the details page
+            const addToCartDetailBtn = document.getElementById('addToCartBtn');
+            if (addToCartDetailBtn) {
+                addToCartDetailBtn.addEventListener('click', function() {
+                    const productId = this.dataset.productId;
+                    const productName = this.dataset.productName;
+                    const productPrice = this.dataset.productPrice;
+                    const selectedSize = document.getElementById('size').value;
+                    const selectedQuantity = document.getElementById('quantity').value;
+                    addToCart(productId, productName, productPrice, selectedQuantity, selectedSize);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
